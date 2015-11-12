@@ -1,7 +1,6 @@
 package fako
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 
@@ -9,19 +8,19 @@ import (
 )
 
 type OU struct {
-	Name     string `fako:"name"`
+	Name     string `fako:"full_name"`
 	Username string `fako:"username"`
-	Email    string `fako:"email"`
+	Email    string `fako:"email_address"`
 	Phone    string `fako:"phone"`
-	Password string `fako:"password"`
-	Address  string `fako:"address"`
+	Password string `fako:"simple_password"`
+	Address  string `fako:"street_address"`
 }
 
 func TestFillsFields(t *testing.T) {
 	var myCase OU
 	Fill(&myCase)
 	var first = myCase.Name
-	fmt.Println(myCase.Email)
+
 	assert.NotEqual(t, myCase.Name, "")
 	Fill(&myCase)
 	assert.NotEqual(t, myCase.Name, first)

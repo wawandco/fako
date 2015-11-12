@@ -4,15 +4,78 @@ import (
 	"reflect"
 
 	"github.com/wawandco/fako/Godeps/_workspace/src/github.com/icrowley/fake"
+	"github.com/wawandco/fako/Godeps/_workspace/src/github.com/serenize/snaker"
 )
 
 var typeMapping = map[string]func() string{
-	"name":     fake.FullName,
-	"email":    fake.EmailAddress,
-	"phone":    fake.Phone,
-	"username": fake.UserName,
-	"password": fake.SimplePassword,
-	"address":  fake.StreetAddress,
+	"Brand":                    fake.Brand,
+	"Character":                fake.Character,
+	"Characters":               fake.Characters,
+	"City":                     fake.City,
+	"Color":                    fake.Color,
+	"Company":                  fake.Company,
+	"Continent":                fake.Continent,
+	"Country":                  fake.Country,
+	"CreditCardType":           fake.CreditCardType,
+	"Currency":                 fake.Currency,
+	"CurrencyCode":             fake.CurrencyCode,
+	"Digits":                   fake.Digits,
+	"DomainName":               fake.DomainName,
+	"DomainZone":               fake.DomainZone,
+	"EmailAddress":             fake.EmailAddress,
+	"EmailBody":                fake.EmailBody,
+	"EmailSubject":             fake.EmailSubject,
+	"FemaleFirstName":          fake.FemaleFirstName,
+	"FemaleFullName":           fake.FemaleFullName,
+	"FemaleFullNameWithPrefix": fake.FemaleFullNameWithPrefix,
+	"FemaleFullNameWithSuffix": fake.FemaleFullNameWithSuffix,
+	"FemaleLastName":           fake.FemaleLastName,
+	"FemalePatronymic":         fake.FemalePatronymic,
+	"FirstName":                fake.FirstName,
+	"FullName":                 fake.FullName,
+	"FullNameWithPrefix":       fake.FullNameWithPrefix,
+	"FullNameWithSuffix":       fake.FullNameWithSuffix,
+	"Gender":                   fake.Gender,
+	"GenderAbbrev":             fake.GenderAbbrev,
+	"HexColor":                 fake.HexColor,
+	"HexColorShort":            fake.HexColorShort,
+	"IPv4":                     fake.IPv4,
+	"Industry":                 fake.Industry,
+	"JobTitle":                 fake.JobTitle,
+	"Language":                 fake.Language,
+	"LastName":                 fake.LastName,
+	"LatitudeDirection":        fake.LatitudeDirection,
+	"LongitudeDirection":       fake.LongitudeDirection,
+	"MaleFirstName":            fake.MaleFirstName,
+	"MaleFullName":             fake.MaleFullName,
+	"MaleFullNameWithPrefix":   fake.MaleFullNameWithPrefix,
+	"MaleFullNameWithSuffix":   fake.MaleFullNameWithSuffix,
+	"MaleLastName":             fake.MaleLastName,
+	"MalePatronymic":           fake.MalePatronymic,
+	"Model":                    fake.Model,
+	"Month":                    fake.Month,
+	"MonthShort":               fake.MonthShort,
+	"Paragraph":                fake.Paragraph,
+	"Paragraphs":               fake.Paragraphs,
+	"Patronymic":               fake.Patronymic,
+	"Phone":                    fake.Phone,
+	"Product":                  fake.Product,
+	"ProductName":              fake.ProductName,
+	"Sentence":                 fake.Sentence,
+	"Sentences":                fake.Sentences,
+	"SimplePassword":           fake.SimplePassword,
+	"State":                    fake.State,
+	"StateAbbrev":              fake.StateAbbrev,
+	"Street":                   fake.Street,
+	"StreetAddress":            fake.StreetAddress,
+	"Title":                    fake.Title,
+	"TopLevelDomain":           fake.TopLevelDomain,
+	"UserName":                 fake.UserName,
+	"WeekDay":                  fake.WeekDay,
+	"WeekDayShort":             fake.WeekDayShort,
+	"Word":                     fake.Word,
+	"Words":                    fake.Words,
+	"Zip":                      fake.Zip,
 }
 
 //Fill fill all the fields that have a fako: tag
@@ -39,6 +102,7 @@ func fillWithDetails(strukt interface{}, only []string, except []string) {
 		field := elem.Field(i)
 		fieldt := elemT.Field(i)
 		fakeType := fieldt.Tag.Get("fako")
+		fakeType = snaker.SnakeToCamel(fakeType)
 
 		inOnly := len(only) == 0 || (len(only) > 0 && contains(only, fieldt.Name))
 		notInExcept := len(except) == 0 || (len(except) > 0 && !contains(except, fieldt.Name))
