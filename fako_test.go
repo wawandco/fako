@@ -1,6 +1,7 @@
 package fako
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -20,6 +21,7 @@ func TestFillsFields(t *testing.T) {
 	var myCase OU
 	Fill(&myCase)
 	var first = myCase.Name
+	fmt.Println(myCase.Email)
 	assert.NotEqual(t, myCase.Name, "")
 	Fill(&myCase)
 	assert.NotEqual(t, myCase.Name, first)
