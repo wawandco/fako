@@ -15,14 +15,17 @@ var typeMapping = map[string]func() string{
 	"address":  fake.StreetAddress,
 }
 
+//Fill fill all the fields that have a fako: tag
 func Fill(strukt interface{}) {
 	fillWithDetails(strukt, []string{}, []string{})
 }
 
+//FillOnly fill fields that have a fako: tag and its name is on the second argument array
 func FillOnly(strukt interface{}, fields ...string) {
 	fillWithDetails(strukt, fields, []string{})
 }
 
+//FillExcept fill fields that have a fako: tag and its name is not on the second argument array
 func FillExcept(strukt interface{}, fields ...string) {
 	fillWithDetails(strukt, []string{}, fields)
 }

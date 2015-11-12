@@ -25,6 +25,7 @@ func main(){
   fmt.Println(&user.Email)
   // This Prints AnthonyMeyer@Twimbo.biz
   // or another valid email
+
 }
 ```
 
@@ -39,6 +40,7 @@ func main(){
 
 But our goal is to map all of the [fake](https://github.com/icrowley/fake) functions into **Fako**.
 
+Fako provides 3 built in functions `Fill`, `FillOnly`, and `FillExcept`, please go to [godoc](https://godoc.org/github.com/wawandco/fako) for details.
 
 #### Credits
 As you may have notices this is based on [fake](https://github.com/icrowley/fake) library, which does all the work to generate data.
