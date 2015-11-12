@@ -49,4 +49,4 @@ Fako provides 3 built in functions `Fill`, `FillOnly`, and `FillExcept`, please 
 As you may have notices this is based on [fake](https://github.com/icrowley/fake) library, which does all the work to generate data.
 
 #### Copyright
-Copyright (c) 2015-2019 Wawandco SAS. See LICENSE for further details.
+Fako is Copyright © 2008-2015 Wawandco SAS. It is free software, and may be redistributed under the terms specified in the LICENSE file.
