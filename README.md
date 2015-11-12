@@ -118,7 +118,8 @@ Fako provides 3 built in functions `Fill`, `FillOnly`, and `FillExcept`, please 
 - words
 - zip
 
-
+#### TODO
+Allow user to register custom data generators with functions.
 
 #### Credits
 As you may have notices this is based on [fake](https://github.com/icrowley/fake) library, which does all the work to generate data.
