@@ -1,5 +1,7 @@
 ### Fako
 
+[![Circle CI](https://circleci.com/gh/wawandco/fako.svg?style=svg)](https://circleci.com/gh/wawandco/fako)
+
 **Fako** is a library intended to fake Golang structs with fake but coherent data, **Fako** maps struct field tags and generates fake data accordingly.
 
 We find it useful when writing specs to generate fake database data, hope you too.
