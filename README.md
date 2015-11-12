@@ -26,7 +26,7 @@ func main(){
   fako.Fill(&user)
 
   fmt.Println(&user.Email)
-  // This Prints AnthonyMeyer@Twimbo.biz
+  // This prints something like AnthonyMeyer@Twimbo.biz
   // or another valid email
 
 }
