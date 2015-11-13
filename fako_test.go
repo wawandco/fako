@@ -14,6 +14,7 @@ type OU struct {
 	Phone    string `fako:"phone"`
 	Password string `fako:"simple_password"`
 	Address  string `fako:"street_address"`
+	IgnoreMe string ``
 }
 
 func TestFillsFields(t *testing.T) {

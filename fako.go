@@ -3,8 +3,8 @@ package fako
 import (
 	"reflect"
 
+	"github.com/serenize/snaker"
 	"github.com/wawandco/fako/Godeps/_workspace/src/github.com/icrowley/fake"
-	"github.com/wawandco/fako/Godeps/_workspace/src/github.com/serenize/snaker"
 )
 
 var typeMapping = map[string]func() string{
@@ -98,24 +98,36 @@ func fillWithDetails(strukt interface{}, only []string, except []string) {
 	elemT := reflect.TypeOf(strukt).Elem()
 
 	for i := 0; i < elem.NumField(); i++ {
-
 		field := elem.Field(i)
 		fieldt := elemT.Field(i)
 		fakeType := fieldt.Tag.Get("fako")
-		fakeType = snaker.SnakeToCamel(fakeType)
 
-		inOnly := len(only) == 0 || (len(only) > 0 && contains(only, fieldt.Name))
-		notInExcept := len(except) == 0 || (len(except) > 0 && !contains(except, fieldt.Name))
+		if fakeType != "" {
+			fakeType = snaker.SnakeToCamel(fakeType)
+			function := findFakeFunctionFor(fakeType)
 
-		if field.CanSet() && fakeType != "" && inOnly && notInExcept {
-			for kind, function := range typeMapping {
-				if fakeType == kind {
-					field.SetString(function())
-					break
-				}
+			inOnly := len(only) == 0 || (len(only) > 0 && contains(only, fieldt.Name))
+			notInExcept := len(except) == 0 || (len(except) > 0 && !contains(except, fieldt.Name))
+
+			if field.CanSet() && fakeType != "" && inOnly && notInExcept {
+				field.SetString(function())
 			}
 		}
+
 	}
+}
+
+func findFakeFunctionFor(fako string) func() string {
+	result := func() string { return "" }
+
+	for kind, function := range typeMapping {
+		if fako == kind {
+			result = function
+			break
+		}
+	}
+
+	return result
 }
 
 func contains(s []string, e string) bool {
