@@ -118,8 +118,43 @@ Fako provides 3 built in functions `Fill`, `FillOnly`, and `FillExcept`, please 
 - words
 - zip
 
-#### TODO
-Allow user to register custom data generators with functions.
+#### Custom Generators
+
+Fako provides a function called `Register` to add custom data generators in case you need something that our provided generators cannot cover.
+
+To add a custom generator simply call the `Register` function as in the following example:
+
+```go
+import(
+  "fmt"
+  "github.com/wawandco/fako"
+)
+
+type User struct {
+    Name     string `fako:"full_name"`
+    Username string `fako:"username"`
+    Email    string `fako:"email_address"`//Notice the fako:"email_address" tag
+    Phone    string `fako:"phone"`
+    Password string `fako:"simple_password"`
+    Address  string `fako:"street_address"`
+
+    AValue   string `fako:"a_gen"`
+}
+
+func main(){
+  fako.Register("a_gen", func() string {
+    return "My Value"
+  })
+
+  var user User
+  fako.Fill(&user)
+  fmt.Println(user.AValue) //should print My Value
+}
+```
+
+When using custom generators please keep the following in mind:
+  1. Call Register function before calling `Fill` and its brothers.
+  2. Custom generators override base generators, if you pick the same name as one of the existing generators, we will override the existing generator with yours.
 
 #### Credits
 As you may have notices this is based on [fake](https://github.com/icrowley/fake) library, which does all the work to generate data.

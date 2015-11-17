@@ -78,6 +78,8 @@ var typeMapping = map[string]func() string{
 	"Zip":                      fake.Zip,
 }
 
+var customGenerators = map[string]func() string{}
+
 //Fill fill all the fields that have a fako: tag
 func Fill(strukt interface{}) {
 	fillWithDetails(strukt, []string{}, []string{})
@@ -91,6 +93,11 @@ func FillOnly(strukt interface{}, fields ...string) {
 //FillExcept fill fields that have a fako: tag and its name is not on the second argument array
 func FillExcept(strukt interface{}, fields ...string) {
 	fillWithDetails(strukt, []string{}, fields)
+}
+
+func Register(identifier string, generator func() string) {
+	fakeType := snaker.SnakeToCamel(identifier)
+	customGenerators[fakeType] = generator
 }
 
 func fillWithDetails(strukt interface{}, only []string, except []string) {
@@ -117,10 +124,19 @@ func fillWithDetails(strukt interface{}, only []string, except []string) {
 	}
 }
 
+func allGenerators() map[string]func() string {
+	dst := typeMapping
+	for k, v := range customGenerators {
+		dst[k] = v
+	}
+
+	return dst
+}
+
 func findFakeFunctionFor(fako string) func() string {
 	result := func() string { return "" }
 
-	for kind, function := range typeMapping {
+	for kind, function := range allGenerators() {
 		if fako == kind {
 			result = function
 			break

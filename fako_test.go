@@ -15,6 +15,7 @@ type OU struct {
 	Password string `fako:"simple_password"`
 	Address  string `fako:"street_address"`
 	IgnoreMe string ``
+	AValue   string `fako:"a_gen"`
 }
 
 func TestFillsFields(t *testing.T) {
@@ -47,4 +48,15 @@ func TestFillExcept(t *testing.T) {
 
 	assert.Equal(t, myCase.Name, "")
 	assert.NotEqual(t, myCase.Email, "")
+}
+
+func TestCustomGenerator(t *testing.T) {
+	Register("a_gen", func() string {
+		return "A"
+	})
+
+	var myCase OU
+	Fill(&myCase)
+
+	assert.Equal(t, myCase.AValue, "A")
 }
