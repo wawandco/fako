@@ -1,7 +1,9 @@
 package fako
 
 import (
+	"math/rand"
 	"reflect"
+	"time"
 
 	"github.com/serenize/snaker"
 	"github.com/wawandco/fako/Godeps/_workspace/src/github.com/icrowley/fake"
@@ -95,6 +97,8 @@ func FillExcept(strukt interface{}, fields ...string) {
 	fillWithDetails(strukt, []string{}, fields)
 }
 
+// Register allows user to add his own data generators for special cases
+// that we could not cover with the generators that fako includes by default.
 func Register(identifier string, generator func() string) {
 	fakeType := snaker.SnakeToCamel(identifier)
 	customGenerators[fakeType] = generator
@@ -146,11 +150,49 @@ func findFakeFunctionFor(fako string) func() string {
 	return result
 }
 
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
+// Fuzz Fills passed interface with random data based on the struct field type,
+// take a look at fuzzValueFor for details on supported data types.
+func Fuzz(e interface{}) {
+	ty := reflect.TypeOf(e)
+
+	if ty.Kind() == reflect.Ptr {
+		ty = ty.Elem()
 	}
-	return false
+
+	if ty.Kind() == reflect.Struct {
+		value := reflect.ValueOf(e).Elem()
+		for i := 0; i < ty.NumField(); i++ {
+			field := value.Field(i)
+
+			if field.CanSet() {
+				field.Set(fuzzValueFor(field.Kind()))
+			}
+		}
+
+	}
+}
+
+// fuzzValueFor Generates random values for the following types:
+// string, bool, int, int32, int64, float32, float64
+func fuzzValueFor(kind reflect.Kind) reflect.Value {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	switch kind {
+	case reflect.String:
+		return reflect.ValueOf(randomString(25))
+	case reflect.Int:
+		return reflect.ValueOf(r.Int())
+	case reflect.Int32:
+		return reflect.ValueOf(r.Int31())
+	case reflect.Int64:
+		return reflect.ValueOf(r.Int63())
+	case reflect.Float32:
+		return reflect.ValueOf(r.Float32())
+	case reflect.Float64:
+		return reflect.ValueOf(r.Float64())
+	case reflect.Bool:
+		val := r.Intn(2) > 0
+		return reflect.ValueOf(val)
+	}
+
+	return reflect.ValueOf("")
 }
