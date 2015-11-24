@@ -156,6 +156,29 @@ When using custom generators please keep the following in mind:
   1. Call Register function before calling `Fill` and its brothers.
   2. Custom generators override base generators, if you pick the same name as one of the existing generators, we will override the existing generator with yours.
 
+
+#### Fuzzing
+
+Sometimes you just want to generate random data inside a struct, for those cases you wont want to fill fako types (yes, we understand that part). Fako provides you a `Fuzz` function you can use to fuzz your structs with random data that simply matches the struct's field types.
+
+You can use it as in the following example:
+
+```go
+import "fako"
+
+type Instance struct {
+   Name string
+   Number int
+}
+
+func main(){
+  instance := Instance{}
+  fako.Fuzz(&instance) // This fills your instance variable
+}
+```
+
+Note, Fuzz function works for the following types `string, bool, int, int32, int64, float32, float64`. other types like `Array` or `Chan` are out of our scope.
+
 #### Credits
 As you may have notices this is based on [fake](https://github.com/icrowley/fake) library, which does all the work to generate data.
 

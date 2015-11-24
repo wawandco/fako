@@ -60,3 +60,34 @@ func TestCustomGenerator(t *testing.T) {
 
 	assert.Equal(t, myCase.AValue, "A")
 }
+
+type Simple struct {
+	Attribute string
+	Value     int
+	Value32   int32
+	Value64   int64
+	ValueF32  float32
+	ValueF64  float64
+	Active    bool
+}
+
+func TestFuzz(t *testing.T) {
+	simple := Simple{}
+	Fuzz(&simple)
+
+	assert.NotEqual(t, 0, simple.Value)
+	assert.NotEqual(t, 0, simple.Value32)
+	assert.NotEqual(t, 0, simple.Value64)
+	assert.NotEqual(t, 0.0, simple.ValueF32)
+	assert.NotEqual(t, 0.0, simple.ValueF64)
+
+	count := 0
+	for i := 0; i < 10; i++ {
+		Fuzz(&simple)
+		if simple.Active {
+			count++
+		}
+	}
+
+	assert.True(t, count > 0)
+}
