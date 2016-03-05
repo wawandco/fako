@@ -9,7 +9,7 @@ import (
 
 type OU struct {
 	Name     string `fako:"full_name"`
-	Username string `fako:"username"`
+	Username string `fako:"user_name"`
 	Email    string `fako:"email_address"`
 	Phone    string `fako:"phone"`
 	Password string `fako:"simple_password"`
@@ -90,4 +90,18 @@ func TestFuzz(t *testing.T) {
 	}
 
 	assert.True(t, count > 0)
+}
+
+func TestFillAll(t *testing.T) {
+	customName := struct {
+		Name string `fako:"full_name"`
+	}{}
+
+	customU := struct {
+		Username string `fako:"user_name"`
+	}{}
+
+	Fill(&customName, &customU)
+	assert.NotZero(t, customName.Name)
+	assert.NotZero(t, customU.Username)
 }

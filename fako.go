@@ -1,6 +1,7 @@
 package fako
 
 import (
+	"log"
 	"math/rand"
 	"reflect"
 	"time"
@@ -83,7 +84,14 @@ var typeMapping = map[string]func() string{
 var customGenerators = map[string]func() string{}
 
 //Fill fill all the fields that have a fako: tag
-func Fill(strukt interface{}) {
+func Fill(elems ...interface{}) {
+	for _, elem := range elems {
+		log.Println(elem)
+		FillElem(elem)
+	}
+}
+
+func FillElem(strukt interface{}) {
 	fillWithDetails(strukt, []string{}, []string{})
 }
 
