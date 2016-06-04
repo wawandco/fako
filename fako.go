@@ -85,7 +85,6 @@ var customGenerators = map[string]func() string{}
 //Fill fill all the fields that have a fako: tag
 func Fill(elems ...interface{}) {
 	for _, elem := range elems {
-		//log.Println(elem)
 		FillElem(elem)
 	}
 }
