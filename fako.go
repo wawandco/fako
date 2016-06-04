@@ -1,7 +1,6 @@
 package fako
 
 import (
-	"log"
 	"math/rand"
 	"reflect"
 	"time"
