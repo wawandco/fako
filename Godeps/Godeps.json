@@ -1,6 +1,10 @@
 {
 	"ImportPath": "github.com/wawandco/fako",
-	"GoVersion": "go1.5.1",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v72",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/davecgh/go-spew/spew",
@@ -20,8 +24,8 @@
 		},
 		{
 			"ImportPath": "github.com/stretchr/testify/assert",
-			"Comment": "v1.0-79-ge7a1d88",
-			"Rev": "e7a1d8890c7638d7bb50e3e498de4a1e913a28cf"
+			"Comment": "v1.0-80-g67106a5",
+			"Rev": "67106a5111a06241c8d84952c33214675f51a34a"
 		}
 	]
 }
