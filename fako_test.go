@@ -105,3 +105,30 @@ func TestFillAll(t *testing.T) {
 	assert.NotZero(t, customName.Name)
 	assert.NotZero(t, customU.Username)
 }
+
+func TestFillsIntegers(t *testing.T) {
+	invoice := struct {
+		ItemCount int   `fako:"min=10"`
+		Number    int64 `fako:"min=0;max=10"`
+	}{}
+
+	Fill(&invoice)
+	assert.NotZero(t, invoice.Number)
+
+	assert.True(t, invoice.Number > 0)
+	assert.True(t, invoice.Number <= 10)
+}
+
+func TestExtractMinMaxInt64(t *testing.T) {
+	cases := map[string][]int64{
+		"min=0;max=10": []int64{0, 10},
+		"min=10":       []int64{0, 10},
+	}
+
+	for key, expectedResults := range cases {
+		min, max := extractMinMaxInt64(key)
+		assert.Equal(t, min, expectedResults[0])
+		assert.Equal(t, max, expectedResults[1])
+	}
+
+}

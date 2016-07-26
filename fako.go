@@ -2,6 +2,11 @@ package fako
 
 import (
 	"reflect"
+	"strconv"
+
+	"math/rand"
+	"strings"
+	"time"
 
 	"github.com/serenize/snaker"
 )
@@ -37,17 +42,53 @@ func fillWithDetails(strukt interface{}, only []string, except []string) {
 		fieldt := elemT.Field(i)
 		fakeType := fieldt.Tag.Get("fako")
 
-		if fakeType != "" {
-			fakeType = snaker.SnakeToCamel(fakeType)
-			function := findFakeFunctionFor(fakeType)
+		switch field.Kind() {
+		case reflect.String:
+			if fakeType != "" {
+				fakeType = snaker.SnakeToCamel(fakeType)
+				function := findFakeFunctionFor(fakeType)
 
-			inOnly := len(only) == 0 || (len(only) > 0 && contains(only, fieldt.Name))
-			notInExcept := len(except) == 0 || (len(except) > 0 && !contains(except, fieldt.Name))
+				inOnly := len(only) == 0 || (len(only) > 0 && contains(only, fieldt.Name))
+				notInExcept := len(except) == 0 || (len(except) > 0 && !contains(except, fieldt.Name))
 
-			if field.CanSet() && fakeType != "" && inOnly && notInExcept {
-				field.SetString(function())
+				if field.CanSet() && fakeType != "" && inOnly && notInExcept {
+					field.SetString(function())
+				}
+
+				continue
 			}
+
+		case reflect.Int, reflect.Int32, reflect.Int64:
+			min, max := extractMinMaxInt64(fakeType)
+			rand.Seed(time.Now().Unix())
+			val := rand.Int63n(max) + min
+			field.SetInt(val)
 		}
 
 	}
+}
+
+/** extractMinMax function extracts min and max from the fako tag **/
+func extractMinMaxInt64(base string) (int64, int64) {
+	min, max := 0, 0
+	parts := strings.Split(base, ";")
+	for _, part := range parts {
+		content := strings.Split(part, "=")
+		if len(content) == 2 {
+			switch content[0] {
+			case "min":
+				min, _ = strconv.Atoi(content[1])
+			case "max":
+				max, _ = strconv.Atoi(content[1])
+			}
+		}
+	}
+
+	if min > max {
+		tmp := max
+		max = min
+		min = tmp
+	}
+
+	return int64(min), int64(max)
 }
