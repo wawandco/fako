@@ -1,7 +1,9 @@
 package fako
 
 import (
+	"fmt"
 	"reflect"
+	"strconv"
 
 	"github.com/serenize/snaker"
 )
@@ -36,16 +38,41 @@ func fillWithDetails(strukt interface{}, only []string, except []string) {
 		field := elem.Field(i)
 		fieldt := elemT.Field(i)
 		fakeType := fieldt.Tag.Get("fako")
+		fakeTypes := fmt.Sprintf("%v", fieldt.Type)
+		//fmt.Println("FROM FAKO", len(fakeTypes))
+		if fakeTypes == "string" {
+			if fakeType != "" {
+				fakeType = snaker.SnakeToCamel(fakeType)
+				function := findFakeFunctionFor(fakeType)
 
-		if fakeType != "" {
-			fakeType = snaker.SnakeToCamel(fakeType)
-			function := findFakeFunctionFor(fakeType)
+				inOnly := len(only) == 0 || (len(only) > 0 && contains(only, fieldt.Name))
+				notInExcept := len(except) == 0 || (len(except) > 0 && !contains(except, fieldt.Name))
 
-			inOnly := len(only) == 0 || (len(only) > 0 && contains(only, fieldt.Name))
-			notInExcept := len(except) == 0 || (len(except) > 0 && !contains(except, fieldt.Name))
+				if field.CanSet() && fakeType != "" && inOnly && notInExcept {
+					field.SetString(function())
+				}
+			}
+		} else {
+			v, _ := strconv.Atoi(fakeType)
+			fakeTypeInt := "Int"
+			function := findFakeFunctionForInt(fakeTypeInt)
+			switch fakeTypes {
+			case "int", "int64":
+				if field.CanSet() && fakeTypeInt != "" {
+					field.SetInt(int64(function(v)))
 
-			if field.CanSet() && fakeType != "" && inOnly && notInExcept {
-				field.SetString(function())
+				}
+
+			case "uint", "uint8", "uint64":
+				if field.CanSet() && fakeTypeInt != "" {
+					field.SetUint(uint64(function(v)))
+				}
+			case "float64", "float32":
+				// TODO
+				if field.CanSet() && fakeTypeInt != "" {
+					field.SetFloat(float64(function(v)))
+				}
+
 			}
 		}
 
