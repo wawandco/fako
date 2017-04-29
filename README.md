@@ -1,12 +1,12 @@
 
-### This forked version adds support for ints and floats. However no support for decimals
+### Adds support for ints and floats. However no support for decimals
 ```go
 package main
 
 import (
 	"encoding/json"
 	"io/ioutil"
-
+	//"github.com/wawandco/fako"
 	"github.com/MintyOwl/fako"
 
 	"github.com/hokaccha/go-prettyjson"
