@@ -1,3 +1,70 @@
+
+### This forked version adds support for ints and floats. However no support for decimals
+```go
+package main
+
+import (
+	"encoding/json"
+	"io/ioutil"
+
+	"github.com/MintyOwl/fako"
+
+	"github.com/hokaccha/go-prettyjson"
+)
+
+type Person struct {
+	Phone    int64  `fako:"10";json:"phone"` // Just add number of digits you want. In this example its 10
+	Name     string `fako:"full_name";json:"name"`
+	Username string `fako:"user_name";json:"user_name"`
+	Email    string `fako:"email_address";json:"email"`
+	Password string `fako:"simple_password";json:"password"`
+	Address  string `fako:"street_address";json:"address"`
+}
+
+var persons []*Person
+var per []Person
+
+func init() {
+	//GetPersons()
+}
+
+func formatter() *prettyjson.Formatter {
+	return &prettyjson.Formatter{
+		StringMaxLength: 0,
+		DisabledColor:   true,
+		Indent:          2,
+	}
+}
+
+func CreatePersons() {
+	for i := 0; i < 5; i++ {
+		var person Person
+		fako.FillElem(&person)
+		persons = append(persons, &person)
+	}
+	b, _ := json.Marshal(persons)
+	b, _ = formatter().Format(b)
+	//fmt.Println("JSON ERR >", err, string(b))
+	ioutil.WriteFile("people.json", b, 0666)
+}
+
+func GetPersons() []*Person {
+	if persons != nil {
+		return persons
+	}
+	jsn, _ := ioutil.ReadFile("people.json")
+	var personns = make([]*Person, 0)
+	json.Unmarshal(jsn, &personns)
+	persons = personns
+	return personns
+}
+
+func main() {	
+	CreatePersons()
+}
+
+```
+
 ### Fako
 
 [![Circle CI](https://circleci.com/gh/wawandco/fako.svg?style=svg)](https://circleci.com/gh/wawandco/fako) [![Godoc](https://img.shields.io/badge/godoc-docs-blue.svg)](https://godoc.org/github.com/wawandco/fako)
