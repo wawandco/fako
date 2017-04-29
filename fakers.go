@@ -3,13 +3,60 @@ package fako
 import (
 	"math/rand"
 	"reflect"
+	"strconv"
+	"sync"
 	"time"
 
 	"github.com/icrowley/fake"
 	"github.com/serenize/snaker"
 )
 
+var src = rand.New(&rndSrc{src: rand.NewSource(time.Now().UnixNano())})
+
+// piece of code taken from github.com/icrowley/fake
+type rndSrc struct {
+	mtx sync.Mutex
+	src rand.Source
+}
+
+func (s *rndSrc) Int63() int64 {
+	s.mtx.Lock()
+	n := s.src.Int63()
+	s.mtx.Unlock()
+	return n
+}
+
+func (s *rndSrc) Seed(n int64) {
+	s.mtx.Lock()
+	s.src.Seed(n)
+	s.mtx.Unlock()
+}
+
+func Rndm(n int) int {
+	var result string
+	for i := 0; i < n; i++ {
+		if i == 0 {
+			first := src.Intn(n)
+			if first == 0 {
+				result += strconv.Itoa(5)
+			} else {
+				result += strconv.Itoa(first)
+			}
+		} else {
+			result += strconv.Itoa(src.Intn(n))
+		}
+
+	}
+	res, _ := strconv.Atoi(result)
+	return res
+
+}
+
 var customGenerators = map[string]func() string{}
+var typeMappingInt = map[string]func(int) int{
+	"Int": Rndm,
+}
+
 var typeMapping = map[string]func() string{
 	"Brand":                    fake.Brand,
 	"Character":                fake.Character,
@@ -110,6 +157,11 @@ func Fuzz(e interface{}) {
 	}
 }
 
+func allGeneratorsInt() map[string]func(int) int {
+	return typeMappingInt
+
+}
+
 func allGenerators() map[string]func() string {
 	dst := typeMapping
 	for k, v := range customGenerators {
@@ -117,6 +169,18 @@ func allGenerators() map[string]func() string {
 	}
 
 	return dst
+}
+
+//findFakeFunctionForInt returns a faker function for a fako identifier
+func findFakeFunctionForInt(fako string) func(int) int {
+	result := func(int) int { return 123456789 }
+	for kind, function := range allGeneratorsInt() {
+		if fako == kind {
+			result = function
+			break
+		}
+	}
+	return result
 }
 
 //findFakeFunctionFor returns a faker function for a fako identifier
