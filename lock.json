@@ -1,0 +1,53 @@
+{
+    "memo": "d51293afd5dea13342921fa771ed3b599c1c3d6fd4c09a96fae21ee077691140",
+    "projects": [
+        {
+            "name": "github.com/corpix/uarand",
+            "branch": "master",
+            "revision": "1d58d0383c4d7a4697f63d1097d466864c9ab6d3",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/davecgh/go-spew",
+            "version": "v1.1.0",
+            "revision": "a7a0063072ed89d04285d3d3362aa590ed9f7878",
+            "packages": [
+                "spew"
+            ]
+        },
+        {
+            "name": "github.com/icrowley/fake",
+            "branch": "master",
+            "revision": "9f67e8561905ff9c2b64fdd801ee70cf852b3b89",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/markbates/inflect",
+            "branch": "master",
+            "revision": "6cacb66d100482ef7cc366289ccb156020e57e76",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/pmezard/go-difflib",
+            "version": "v1.0.0",
+            "revision": "c0b812dadcf4498dede02bb7f0c5c478be997e34",
+            "packages": [
+                "difflib"
+            ]
+        },
+        {
+            "name": "github.com/stretchr/testify",
+            "branch": "master",
+            "revision": "4d4bfba8f1d1027c4fdbe371823030df51419987",
+            "packages": [
+                "assert"
+            ]
+        }
+    ]
+}

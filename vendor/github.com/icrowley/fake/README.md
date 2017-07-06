@@ -45,7 +45,7 @@ go test
 
 ```go
 name := fake.FirstName()
-fullname = := fake.FullName()
+fullname := fake.FullName()
 product := fake.Product()
 ```
 
@@ -82,3 +82,9 @@ password := fake.Paragraph()
 Dmitry Afanasyev,
 http://twitter.com/i_crowley
 dimarzio1986@gmail.com
+
+
+### Maintainers
+
+Dmitry Moskowski
+https://github.com/corpix

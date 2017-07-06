@@ -1,0 +1,7 @@
+{
+    "dependencies": {
+        "github.com/stretchr/testify": {
+            "branch": "master"
+        }
+    }
+}

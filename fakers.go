@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/icrowley/fake"
-	"github.com/serenize/snaker"
+	"github.com/markbates/inflect"
 )
 
 var customGenerators = map[string]func() string{}
@@ -84,7 +84,7 @@ var typeMapping = map[string]func() string{
 // Register allows user to add his own data generators for special cases
 // that we could not cover with the generators that fako includes by default.
 func Register(identifier string, generator func() string) {
-	fakeType := snaker.SnakeToCamel(identifier)
+	fakeType := inflect.Camelize(identifier)
 	customGenerators[fakeType] = generator
 }
 

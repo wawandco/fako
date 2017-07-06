@@ -1,8 +1,10 @@
 package fake
 
 import (
-	"strconv"
+	"net"
 	"strings"
+
+	"github.com/corpix/uarand"
 )
 
 // UserName generates user name in one of the following forms
@@ -51,9 +53,25 @@ func DomainZone() string {
 
 // IPv4 generates IPv4 address
 func IPv4() string {
-	ip := make([]string, 4)
-	for i := 0; i < 4; i++ {
-		ip[i] = strconv.Itoa(r.Intn(256))
+	size := 4
+	ip := make([]byte, size)
+	for i := 0; i < size; i++ {
+		ip[i] = byte(r.Intn(256))
 	}
-	return strings.Join(ip, ".")
+	return net.IP(ip).To4().String()
+}
+
+// IPv6 generates IPv6 address
+func IPv6() string {
+	size := 16
+	ip := make([]byte, size)
+	for i := 0; i < size; i++ {
+		ip[i] = byte(r.Intn(256))
+	}
+	return net.IP(ip).To16().String()
+}
+
+// UserAgent generates a random user agent.
+func UserAgent() string {
+	return uarand.GetRandom()
 }
