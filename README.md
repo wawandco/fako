@@ -180,7 +180,7 @@ func main(){
 Note, Fuzz function works for the following types `string, bool, int, int32, int64, float32, float64`. other types like `Array` or `Chan` are out of our scope.
 
 #### Credits
-As you may have notices this is based on [fake](https://github.com/icrowley/fake) library, which does all the work to generate data.
+As you may have noticed this is based on [fake](https://github.com/icrowley/fake) library, which does all the work to generate data.
 
 #### Copyright
 Fako is Copyright © 2008-2015 Wawandco SAS. It is free software, and may be redistributed under the terms specified in the LICENSE file.
