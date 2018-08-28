@@ -19,7 +19,7 @@ import(
 
 type User struct {
     Name     string `fako:"full_name"`
-  	Username string `fako:"username"`
+  	Username string `fako:"user_name"`
   	Email    string `fako:"email_address"`//Notice the fako:"email_address" tag
   	Phone    string `fako:"phone"`
   	Password string `fako:"simple_password"`
@@ -132,7 +132,7 @@ import(
 
 type User struct {
     Name     string `fako:"full_name"`
-    Username string `fako:"username"`
+    Username string `fako:"user_name"`
     Email    string `fako:"email_address"`//Notice the fako:"email_address" tag
     Phone    string `fako:"phone"`
     Password string `fako:"simple_password"`
