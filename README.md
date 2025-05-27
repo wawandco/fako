@@ -48,74 +48,9 @@ Fako provides 3 built in functions `Fill`, `FillOnly`, and `FillExcept`, please 
 
 **Fako** support most of the fields on the [fake](https://github.com/icrowley/fake)  library, below you can see a list of the field types you can use.
 
-- brand
-- character
-- characters
-- city
-- color
-- company
-- continent
-- country
-- credit_card_type
-- currency
-- currency_code
-- digits
-- domain_name
-- domain_zone
-- email_address
-- email_body
-- email_subject
-- female_first_name
-- female_full_name
-- female_full_name_with_prefix
-- female_full_name_with_suffix
-- female_last_name
-- female_patronymic
-- first_name
-- full_name
-- full_name_with_prefix
-- full_name_with_suffix
-- gender
-- gender_abbrev
-- hex_color
-- hex_color_short
-- ip_v4
-- industry
-- job_title
-- language
-- last_name
-- latitude_direction
-- longitude_direction
-- male_first_name
-- male_full_name
-- male_full_name_with_prefix
-- male_full_name_with_suffix
-- male_last_name
-- male_patronymic
-- model
-- month
-- month_short
-- paragraph
-- paragraphs
-- patronymic
-- phone
-- product
-- product_name
-- sentence
-- sentences
-- simple_password
-- state
-- state_abbrev
-- street
-- street_address
-- title
-- top_level_domain
-- user_name
-- week_day
-- week_day_short
-- word
-- words
-- zip
+```
+brand, character, characters, city, color, company, continent, country, credit_card_type, currency, currency_code, digits, domain_name, domain_zone, email_address, email_body, email_subject, female_first_name, female_full_name, female_full_name_with_prefix, female_full_name_with_suffix, female_last_name, female_patronymic, first_name, full_name, full_name_with_prefix, full_name_with_suffix, gender, gender_abbrev, hex_color, hex_color_short, ip_v4, industry, job_title, language, last_name, latitude_direction, longitude_direction, male_first_name, male_full_name, male_full_name_with_prefix, male_full_name_with_suffix, male_last_name, male_patronymic, model, month, month_short, paragraph, paragraphs, patronymic, phone, product, product_name, sentence, sentences, simple_password, state, state_abbrev, street, street_address, title, top_level_domain, user_name, week_day, week_day_short, word, words, zip
+```
 
 #### Custom Generators
 
