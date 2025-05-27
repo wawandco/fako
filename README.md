@@ -13,8 +13,8 @@ This is an example of how **Fako** works.
 
 ```go
 import(
-  "fmt"
-  "github.com/wawandco/fako"
+	"fmt"
+	"github.com/wawandco/fako"
 )
 
 type User struct {
@@ -27,21 +27,20 @@ type User struct {
 }
 
 func main(){
-  var user User
-  fako.Fill(&user)
+	var user User
+	fako.Fill(&user)
 
-  fmt.Println(&user.Email)
-  // This prints something like AnthonyMeyer@Twimbo.biz
-  // or another valid email
+	fmt.Println(user.Email)
+	// This prints something like AnthonyMeyer@Twimbo.biz
+	// or another valid email
 
   var userWithOnlyEmail User
-  fako.FillOnly(&userWithOnlyEmail, "Email")
-  //This will fill all only the email
+	fako.FillOnly(&userWithOnlyEmail, "Email")
+	//This will fill all only the email
 
-  var userWithoutEmail User
-  fako.FillExcept(&userWithoutEmail, "Email")
+	var userWithoutEmail User
+	fako.FillExcept(&userWithoutEmail, "Email")
   //This will fill all the fields except the email
-
 }
 ```
 
@@ -126,19 +125,19 @@ To add a custom generator simply call the `Register` function as in the followin
 
 ```go
 import(
-  "fmt"
-  "github.com/wawandco/fako"
+	"fmt"
+	"github.com/wawandco/fako"
 )
 
 type User struct {
-    Name     string `fako:"full_name"`
-    Username string `fako:"user_name"`
-    Email    string `fako:"email_address"`//Notice the fako:"email_address" tag
-    Phone    string `fako:"phone"`
-    Password string `fako:"simple_password"`
-    Address  string `fako:"street_address"`
+	Name     string `fako:"full_name"`
+	Username string `fako:"user_name"`
+	Email    string `fako:"email_address"`//Notice the fako:"email_address" tag
+	Phone    string `fako:"phone"`
+	Password string `fako:"simple_password"`
+	Address  string `fako:"street_address"`
 
-    AValue   string `fako:"a_gen"`
+	AValue   string `fako:"a_gen"`
 }
 
 func main(){
@@ -167,13 +166,13 @@ You can use it as in the following example:
 import "fako"
 
 type Instance struct {
-   Name string
-   Number int
+	Name string
+	Number int
 }
 
 func main(){
-  instance := Instance{}
-  fako.Fuzz(&instance) // This fills your instance variable
+	instance := Instance{}
+	fako.Fuzz(&instance) // This fills your instance variable
 }
 ```
 
