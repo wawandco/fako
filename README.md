@@ -141,13 +141,13 @@ type User struct {
 }
 
 func main(){
-  fako.Register("a_gen", func() string {
-    return "My Value"
-  })
+	fako.Register("a_gen", func() string {
+		return "My Value"
+	})
 
-  var user User
-  fako.Fill(&user)
-  fmt.Println(user.AValue) //should print My Value
+	var user User
+	fako.Fill(&user)
+	fmt.Println(user.AValue) //should print My Value
 }
 ```
 
