@@ -2,8 +2,6 @@ package fako
 
 import (
 	"reflect"
-
-	"github.com/markbates/inflect"
 )
 
 //Fill fills all the fields that have a fako: tag
@@ -38,7 +36,7 @@ func fillWithDetails(strukt interface{}, only []string, except []string) {
 		fakeType := fieldt.Tag.Get("fako")
 
 		if fakeType != "" {
-			fakeType = inflect.Camelize(fakeType)
+			fakeType = camelize(fakeType)
 			function := findFakeFunctionFor(fakeType)
 
 			inOnly := len(only) == 0 || (len(only) > 0 && contains(only, fieldt.Name))

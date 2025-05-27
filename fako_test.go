@@ -1,11 +1,8 @@
-package fako_test
+package fako
 
 import (
 	"strings"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/wawandco/fako"
 )
 
 type OU struct {
@@ -21,45 +18,59 @@ type OU struct {
 
 func TestFillsFields(t *testing.T) {
 	var myCase OU
-	fako.Fill(&myCase)
+	Fill(&myCase)
 	var first = myCase.Name
 
-	assert.NotEqual(t, myCase.Name, "")
-	fako.Fill(&myCase)
-	assert.NotEqual(t, myCase.Name, first)
+	if myCase.Name == "" {
+		t.Errorf("Expected Name to be filled, but got empty string")
+	}
+	Fill(&myCase)
+	if myCase.Name == first {
+		t.Errorf("Expected Name to change on second fill, but got same value: %s", first)
+	}
 }
 
 func TestFillsEmail(t *testing.T) {
 	var myCase OU
-	fako.Fill(&myCase)
+	Fill(&myCase)
 
-	assert.True(t, strings.Contains(myCase.Email, "@"))
+	if !strings.Contains(myCase.Email, "@") {
+		t.Errorf("Expected Email to contain '@', but got: %s", myCase.Email)
+	}
 }
 
 func TestFillOnly(t *testing.T) {
 	var myCase OU
-	fako.FillOnly(&myCase, "Name")
+	FillOnly(&myCase, "Name")
 
-	assert.Equal(t, myCase.Email, "")
+	if myCase.Email != "" {
+		t.Errorf("Expected Email to be empty when filling only Name, but got: %s", myCase.Email)
+	}
 }
 
 func TestFillExcept(t *testing.T) {
 	var myCase OU
-	fako.FillExcept(&myCase, "Name")
+	FillExcept(&myCase, "Name")
 
-	assert.Equal(t, myCase.Name, "")
-	assert.NotEqual(t, myCase.Email, "")
+	if myCase.Name != "" {
+		t.Errorf("Expected Name to be empty when excluded from fill, but got: %s", myCase.Name)
+	}
+	if myCase.Email == "" {
+		t.Errorf("Expected Email to be filled when not excluded, but got empty string")
+	}
 }
 
 func TestCustomGenerator(t *testing.T) {
-	fako.Register("a_gen", func() string {
+	Register("a_gen", func() string {
 		return "A"
 	})
 
 	var myCase OU
-	fako.Fill(&myCase)
+	Fill(&myCase)
 
-	assert.Equal(t, myCase.AValue, "A")
+	if myCase.AValue != "A" {
+		t.Errorf("Expected AValue to be 'A' from custom generator, but got: %s", myCase.AValue)
+	}
 }
 
 type Simple struct {
@@ -74,23 +85,35 @@ type Simple struct {
 
 func TestFuzz(t *testing.T) {
 	simple := Simple{}
-	fako.Fuzz(&simple)
+	Fuzz(&simple)
 
-	assert.NotEqual(t, 0, simple.Value)
-	assert.NotEqual(t, 0, simple.Value32)
-	assert.NotEqual(t, 0, simple.Value64)
-	assert.NotEqual(t, 0.0, simple.ValueF32)
-	assert.NotEqual(t, 0.0, simple.ValueF64)
+	if simple.Value == 0 {
+		t.Errorf("Expected Value to be non-zero, but got: %d", simple.Value)
+	}
+	if simple.Value32 == 0 {
+		t.Errorf("Expected Value32 to be non-zero, but got: %d", simple.Value32)
+	}
+	if simple.Value64 == 0 {
+		t.Errorf("Expected Value64 to be non-zero, but got: %d", simple.Value64)
+	}
+	if simple.ValueF32 == 0.0 {
+		t.Errorf("Expected ValueF32 to be non-zero, but got: %f", simple.ValueF32)
+	}
+	if simple.ValueF64 == 0.0 {
+		t.Errorf("Expected ValueF64 to be non-zero, but got: %f", simple.ValueF64)
+	}
 
 	count := 0
 	for i := 0; i < 10; i++ {
-		fako.Fuzz(&simple)
+		Fuzz(&simple)
 		if simple.Active {
 			count++
 		}
 	}
 
-	assert.True(t, count > 0)
+	if count == 0 {
+		t.Errorf("Expected at least one true value for Active in 10 iterations, but got none")
+	}
 }
 
 func TestFillAll(t *testing.T) {
@@ -102,9 +125,13 @@ func TestFillAll(t *testing.T) {
 		Username string `fako:"user_name"`
 	}{}
 
-	fako.Fill(&customName, &customU)
-	assert.NotZero(t, customName.Name)
-	assert.NotZero(t, customU.Username)
+	Fill(&customName, &customU)
+	if customName.Name == "" {
+		t.Errorf("Expected customName.Name to be filled, but got empty string")
+	}
+	if customU.Username == "" {
+		t.Errorf("Expected customU.Username to be filled, but got empty string")
+	}
 }
 
 func TestFillAliasType(t *testing.T) {
@@ -115,7 +142,44 @@ func TestFillAliasType(t *testing.T) {
 	}
 
 	el := &Custom{}
-	fako.Fill(el)
+	Fill(el)
 
-	assert.NotZero(t, el.Name)
+	if el.Name == "" {
+		t.Errorf("Expected Name to be filled, but got empty string")
+	}
+}
+
+func TestCamelize(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"hello_world", "HelloWorld"},
+		{"hello-world", "HelloWorld"},
+		{"hello world", "HelloWorld"},
+		{"helloWorld", "HelloWorld"},
+		{"hello_world_test", "HelloWorldTest"},
+		{"hello-world-test", "HelloWorldTest"},
+		{"hello world test", "HelloWorldTest"},
+		{"", ""},
+		{"a", "A"},
+		{"user_name", "UserName"},
+		{"full_name", "FullName"},
+		{"email_address", "EmailAddress"},
+		{"simple_password", "SimplePassword"},
+		{"street_address", "StreetAddress"},
+		{"API_KEY", "ApiKey"},
+		{"test_API_key", "TestApiKey"},
+		{"multiple___underscores", "MultipleUnderscores"},
+		{"multiple---dashes", "MultipleDashes"},
+		{"multiple   spaces", "MultipleSpaces"},
+		{"mixed_-_delimiters test", "MixedDelimitersTest"},
+	}
+
+	for _, test := range tests {
+		result := camelize(test.input)
+		if result != test.expected {
+			t.Errorf("camelize(%q) = %q, expected %q", test.input, result, test.expected)
+		}
+	}
 }
