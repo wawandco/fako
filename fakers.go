@@ -89,7 +89,7 @@ func Register(identifier string, generator func() string) {
 
 // Fuzz Fills passed interface with random data based on the struct field type,
 // take a look at fuzzValueFor for details on supported data types.
-func Fuzz(e interface{}) {
+func Fuzz(e any) {
 	ty := reflect.TypeOf(e)
 
 	if ty.Kind() == reflect.Ptr {

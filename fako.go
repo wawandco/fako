@@ -5,28 +5,28 @@ import (
 )
 
 //Fill fills all the fields that have a fako: tag
-func Fill(elems ...interface{}) {
+func Fill(elems ...any) {
 	for _, elem := range elems {
 		FillElem(elem)
 	}
 }
 
 //FillElem provides a way to fill a simple interface
-func FillElem(strukt interface{}) {
+func FillElem(strukt any) {
 	fillWithDetails(strukt, []string{}, []string{})
 }
 
 //FillOnly fills fields that have a fako: tag and its name is on the second argument array
-func FillOnly(strukt interface{}, fields ...string) {
+func FillOnly(strukt any, fields ...string) {
 	fillWithDetails(strukt, fields, []string{})
 }
 
 //FillExcept fills fields that have a fako: tag and its name is not on the second argument array
-func FillExcept(strukt interface{}, fields ...string) {
+func FillExcept(strukt any, fields ...string) {
 	fillWithDetails(strukt, []string{}, fields)
 }
 
-func fillWithDetails(strukt interface{}, only []string, except []string) {
+func fillWithDetails(strukt any, only []string, except []string) {
 	elem := reflect.ValueOf(strukt).Elem()
 	elemT := reflect.TypeOf(strukt).Elem()
 
