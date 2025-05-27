@@ -149,6 +149,108 @@ func TestFillAliasType(t *testing.T) {
 	}
 }
 
+func TestUsesTagValueNotFieldName(t *testing.T) {
+	// Register a custom generator for the tag value "special_tag"
+	Register("special_tag", func() string {
+		return "FROM_TAG"
+	})
+
+	// Register a custom generator for the field name "FieldWithMismatch"
+	Register("field_with_mismatch", func() string {
+		return "FROM_FIELD_NAME"
+	})
+
+	// Create a struct where field name != tag value
+	type TestStruct struct {
+		FieldWithMismatch string `fako:"special_tag"`
+	}
+
+	var test TestStruct
+	Fill(&test)
+
+	// If the bug existed, it would use "FieldWithMismatch" (field name)
+	// and return "FROM_FIELD_NAME". With the fix, it should use "special_tag" 
+	// (tag value) and return "FROM_TAG"
+	if test.FieldWithMismatch != "FROM_TAG" {
+		t.Errorf("Expected field to be filled using tag value 'special_tag' returning 'FROM_TAG', but got: %s", test.FieldWithMismatch)
+	}
+}
+
+func TestConcurrentRegisterAndFill(t *testing.T) {
+	// Regression test to ensure no race conditions when registering custom generators
+	// concurrently while filling structs. This test would fail before the mutex
+	// protection was added to the customGenerators map.
+	const numGoroutines = 100
+	const numIterations = 10
+	
+	type TestStruct struct {
+		Field1 string `fako:"test_gen_1"`
+		Field2 string `fako:"test_gen_2"`
+	}
+	
+	done := make(chan bool, numGoroutines*2)
+	
+	// Goroutines registering generators
+	for i := 0; i < numGoroutines; i++ {
+		go func(id int) {
+			for j := 0; j < numIterations; j++ {
+				Register("test_gen_1", func() string {
+					return "value1"
+				})
+				Register("test_gen_2", func() string {
+					return "value2"
+				})
+			}
+			done <- true
+		}(i)
+	}
+	
+	// Goroutines filling structs
+	for i := 0; i < numGoroutines; i++ {
+		go func() {
+			for j := 0; j < numIterations; j++ {
+				var test TestStruct
+				Fill(&test)
+			}
+			done <- true
+		}()
+	}
+	
+	// Wait for all goroutines to complete
+	for i := 0; i < numGoroutines*2; i++ {
+		<-done
+	}
+}
+
+func TestConcurrentFuzz(t *testing.T) {
+	// Regression test to ensure no race conditions in the Fuzz function.
+	// This test verifies that concurrent calls to Fuzz() are safe and that
+	// random generation doesn't cause data races.
+	const numGoroutines = 100
+	const numIterations = 10
+	
+	type TestStruct struct {
+		Value string
+	}
+	
+	done := make(chan bool, numGoroutines)
+	
+	for i := 0; i < numGoroutines; i++ {
+		go func() {
+			for j := 0; j < numIterations; j++ {
+				var test TestStruct
+				Fuzz(&test)
+			}
+			done <- true
+		}()
+	}
+	
+	// Wait for all goroutines to complete
+	for i := 0; i < numGoroutines; i++ {
+		<-done
+	}
+}
+
 func TestCamelize(t *testing.T) {
 	tests := []struct {
 		input    string

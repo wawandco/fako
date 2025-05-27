@@ -3,12 +3,14 @@ package fako
 import (
 	"math/rand"
 	"reflect"
+	"sync"
 	"time"
 
 	"github.com/icrowley/fake"
 )
 
 var customGenerators = map[string]func() string{}
+var customGeneratorsMutex sync.RWMutex
 var typeMapping = map[string]func() string{
 	"Brand":                    fake.Brand,
 	"Character":                fake.Character,
@@ -82,13 +84,17 @@ var typeMapping = map[string]func() string{
 
 // Register allows user to add his own data generators for special cases
 // that we could not cover with the generators that fako includes by default.
+// This function is safe for concurrent use.
 func Register(identifier string, generator func() string) {
 	fakeType := camelize(identifier)
+	customGeneratorsMutex.Lock()
 	customGenerators[fakeType] = generator
+	customGeneratorsMutex.Unlock()
 }
 
 // Fuzz Fills passed interface with random data based on the struct field type,
 // take a look at fuzzValueFor for details on supported data types.
+// This function is safe for concurrent use.
 func Fuzz(e any) {
 	ty := reflect.TypeOf(e)
 
@@ -98,7 +104,7 @@ func Fuzz(e any) {
 
 	if ty.Kind() == reflect.Struct {
 		value := reflect.ValueOf(e).Elem()
-		for i := 0; i < ty.NumField(); i++ {
+		for i := range ty.NumField() {
 			field := value.Field(i)
 
 			if field.CanSet() {
@@ -110,10 +116,19 @@ func Fuzz(e any) {
 }
 
 func allGenerators() map[string]func() string {
-	dst := typeMapping
+	dst := make(map[string]func() string)
+	
+	// Copy typeMapping
+	for k, v := range typeMapping {
+		dst[k] = v
+	}
+	
+	// Copy customGenerators with read lock
+	customGeneratorsMutex.RLock()
 	for k, v := range customGenerators {
 		dst[k] = v
 	}
+	customGeneratorsMutex.RUnlock()
 
 	return dst
 }
@@ -138,7 +153,7 @@ func fuzzValueFor(kind reflect.Kind) reflect.Value {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	switch kind {
 	case reflect.String:
-		return reflect.ValueOf(randomString(25))
+		return reflect.ValueOf(randomStringThreadSafe(25))
 	case reflect.Int:
 		return reflect.ValueOf(r.Int())
 	case reflect.Int32:
@@ -155,4 +170,15 @@ func fuzzValueFor(kind reflect.Kind) reflect.Value {
 	}
 
 	return reflect.ValueOf("")
+}
+
+// randomStringThreadSafe generates a random string without using global rand state
+func randomStringThreadSafe(strlen int) string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+	result := make([]byte, strlen)
+	for i := 0; i < strlen; i++ {
+		result[i] = chars[r.Intn(len(chars))]
+	}
+	return string(result)
 }
