@@ -34,13 +34,13 @@ func main(){
 	// This prints something like AnthonyMeyer@Twimbo.biz
 	// or another valid email
 
-  var userWithOnlyEmail User
+	var userWithOnlyEmail User
 	fako.FillOnly(&userWithOnlyEmail, "Email")
 	//This will fill all only the email
 
 	var userWithoutEmail User
 	fako.FillExcept(&userWithoutEmail, "Email")
-  //This will fill all the fields except the email
+	//This will fill all the fields except the email
 }
 ```
 
