@@ -1,37 +1,17 @@
 package fako
 
 import (
-	"math/rand"
 	"strings"
-	"time"
 	"unicode"
 )
 
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
-}
-
-func randomString(strlen int) string {
-	r := rand.New(rand.NewSource(time.Now().UTC().UnixNano()))
-	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
-	result := make([]byte, strlen)
-	for i := 0; i < strlen; i++ {
-		result[i] = chars[r.Intn(len(chars))]
-	}
-	return string(result)
-}
-
 // camelize converts a string to CamelCase
 // Examples:
-//   "hello_world" -> "HelloWorld"
-//   "hello-world" -> "HelloWorld"
-//   "hello world" -> "HelloWorld"
-//   "helloWorld" -> "HelloWorld"
+//
+//	"hello_world" -> "HelloWorld"
+//	"hello-world" -> "HelloWorld"
+//	"hello world" -> "HelloWorld"
+//	"helloWorld" -> "HelloWorld"
 func camelize(s string) string {
 	if s == "" {
 		return s
@@ -40,7 +20,7 @@ func camelize(s string) string {
 	var result strings.Builder
 	var currentWord strings.Builder
 	runes := []rune(s)
-	
+
 	for i, r := range runes {
 		if r == '_' || r == '-' || r == ' ' {
 			// Delimiter found, process current word
@@ -59,7 +39,7 @@ func camelize(s string) string {
 			currentWord.WriteRune(r)
 		}
 	}
-	
+
 	// Process the last word
 	if currentWord.Len() > 0 {
 		addCamelWord(&result, currentWord.String())
@@ -73,7 +53,7 @@ func addCamelWord(result *strings.Builder, word string) {
 	if word == "" {
 		return
 	}
-	
+
 	runes := []rune(strings.ToLower(word))
 	result.WriteRune(unicode.ToUpper(runes[0]))
 	for _, r := range runes[1:] {

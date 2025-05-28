@@ -1,6 +1,6 @@
 module github.com/wawandco/fako
 
-go 1.23
+go 1.23.0
 
 require github.com/icrowley/fake v0.0.0-20240710202011-f797eb4a99c0
 

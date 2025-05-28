@@ -2,6 +2,7 @@ package fako
 
 import (
 	"reflect"
+	"slices"
 )
 
 // Fill fills all the fields that have a fako: tag
@@ -30,6 +31,8 @@ func FillExcept(strukt any, fields ...string) {
 	fillWithDetails(strukt, []string{}, fields)
 }
 
+// fillWithDetails fills fields that have a fako: tag and its name is on the second argument array or not on the third argument array
+// This function is safe for concurrent use.
 func fillWithDetails(strukt any, only []string, except []string) {
 	elem := reflect.ValueOf(strukt).Elem()
 	elemT := reflect.TypeOf(strukt).Elem()
@@ -49,15 +52,23 @@ func fillWithDetails(strukt any, only []string, except []string) {
 			if !exists {
 				continue
 			}
+		}
 
+		if fakerID == "" {
+			continue
+		}
+
+		inOnly := len(only) == 0 || (len(only) > 0 && slices.Contains(only, fieldt.Name))
+		inExcept := len(except) != 0 && slices.Contains(except, fieldt.Name)
+		if !inOnly || inExcept {
+			continue
+		}
+
+		if !field.CanSet() {
+			continue
 		}
 
 		function := findFakeFunctionFor(fakerID)
-		inOnly := len(only) == 0 || (len(only) > 0 && contains(only, fieldt.Name))
-		notInExcept := len(except) == 0 || (len(except) > 0 && !contains(except, fieldt.Name))
-
-		if field.CanSet() && fakerID != "" && inOnly && notInExcept {
-			field.SetString(function())
-		}
+		field.SetString(function())
 	}
 }
