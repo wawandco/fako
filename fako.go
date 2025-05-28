@@ -39,19 +39,17 @@ func fillWithDetails(strukt any, only []string, except []string) {
 		fieldt := elemT.Field(i)
 
 		fakerID := fieldt.Tag.Get("fako")
+		fakerID = camelize(fakerID)
 
 		// If no fako tag is specified, try to match field name with faker functions
 		if fakerID == "" {
 			// Convert field name to camelized format and check if a faker function exists
-			fieldNameCamelized := camelize(fieldt.Name)
-			_, exists := allGenerators()[fieldNameCamelized]
+			fakerID = camelize(fieldt.Name)
+			_, exists := allGenerators()[fakerID]
 			if !exists {
 				continue
 			}
 
-			fakerID = fieldNameCamelized
-		} else {
-			fakerID = camelize(fakerID)
 		}
 
 		function := findFakeFunctionFor(fakerID)
