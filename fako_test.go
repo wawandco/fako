@@ -285,3 +285,137 @@ func TestCamelize(t *testing.T) {
 		}
 	}
 }
+
+func TestFieldNameMatching(t *testing.T) {
+	// Test struct with field names that match faker functions
+	type AutoMatchStruct struct {
+		FullName      string // Should match "FullName" faker
+		EmailAddress  string // Should match "EmailAddress" faker
+		Phone         string // Should match "Phone" faker
+		UserName      string // Should match "UserName" faker
+		Company       string // Should match "Company" faker
+		NoMatchField  string // Should not be filled (no matching faker)
+		TaggedField   string `fako:"city"` // Should use tag, not field name
+	}
+
+	var test AutoMatchStruct
+	Fill(&test)
+
+	// Check that fields with matching faker functions are filled
+	if test.FullName == "" {
+		t.Errorf("Expected FullName to be filled by field name matching, but got empty string")
+	}
+	if test.EmailAddress == "" {
+		t.Errorf("Expected EmailAddress to be filled by field name matching, but got empty string")
+	}
+	if !strings.Contains(test.EmailAddress, "@") {
+		t.Errorf("Expected EmailAddress to contain '@', but got: %s", test.EmailAddress)
+	}
+	if test.Phone == "" {
+		t.Errorf("Expected Phone to be filled by field name matching, but got empty string")
+	}
+	if test.UserName == "" {
+		t.Errorf("Expected UserName to be filled by field name matching, but got empty string")
+	}
+	if test.Company == "" {
+		t.Errorf("Expected Company to be filled by field name matching, but got empty string")
+	}
+
+	// Check that field without matching faker is not filled
+	if test.NoMatchField != "" {
+		t.Errorf("Expected NoMatchField to remain empty (no matching faker), but got: %s", test.NoMatchField)
+	}
+
+	// Check that tagged field uses tag value, not field name
+	if test.TaggedField == "" {
+		t.Errorf("Expected TaggedField to be filled using tag value 'city', but got empty string")
+	}
+}
+
+func TestFieldNameMatchingWithVariousFormats(t *testing.T) {
+	// Test field names in different formats that should still match
+	type VariousFormatsStruct struct {
+		FirstName      string // Should match "FirstName" faker
+		First_Name     string // Should match "FirstName" faker (camelized)
+		LastName       string // Should match "LastName" faker
+		Street_Address string // Should match "StreetAddress" faker (camelized)
+	}
+
+	var test VariousFormatsStruct
+	Fill(&test)
+
+	if test.FirstName == "" {
+		t.Errorf("Expected FirstName to be filled, but got empty string")
+	}
+	if test.First_Name == "" {
+		t.Errorf("Expected First_Name to be filled by camelization matching, but got empty string")
+	}
+	if test.LastName == "" {
+		t.Errorf("Expected LastName to be filled, but got empty string")
+	}
+	if test.Street_Address == "" {
+		t.Errorf("Expected Street_Address to be filled by camelization matching, but got empty string")
+	}
+}
+
+func TestFieldNameMatchingWithFillOnly(t *testing.T) {
+	// Test that field name matching works with FillOnly
+	type TestStruct struct {
+		FullName     string // Should match "FullName" faker
+		EmailAddress string // Should match "EmailAddress" faker
+		Phone        string // Should match "Phone" faker
+		NoMatchField string // Should not be filled (no matching faker)
+	}
+
+	var test TestStruct
+	FillOnly(&test, "FullName", "Phone")
+
+	// Only FullName and Phone should be filled
+	if test.FullName == "" {
+		t.Errorf("Expected FullName to be filled by FillOnly with field name matching, but got empty string")
+	}
+	if test.Phone == "" {
+		t.Errorf("Expected Phone to be filled by FillOnly with field name matching, but got empty string")
+	}
+	
+	// EmailAddress should not be filled (not in FillOnly list)
+	if test.EmailAddress != "" {
+		t.Errorf("Expected EmailAddress to be empty (not in FillOnly list), but got: %s", test.EmailAddress)
+	}
+	
+	// NoMatchField should not be filled (no matching faker)
+	if test.NoMatchField != "" {
+		t.Errorf("Expected NoMatchField to be empty (no matching faker), but got: %s", test.NoMatchField)
+	}
+}
+
+func TestFieldNameMatchingWithFillExcept(t *testing.T) {
+	// Test that field name matching works with FillExcept
+	type TestStruct struct {
+		FullName     string // Should match "FullName" faker
+		EmailAddress string // Should match "EmailAddress" faker
+		Phone        string // Should match "Phone" faker
+		NoMatchField string // Should not be filled (no matching faker)
+	}
+
+	var test TestStruct
+	FillExcept(&test, "EmailAddress")
+
+	// FullName and Phone should be filled (not in except list)
+	if test.FullName == "" {
+		t.Errorf("Expected FullName to be filled by FillExcept with field name matching, but got empty string")
+	}
+	if test.Phone == "" {
+		t.Errorf("Expected Phone to be filled by FillExcept with field name matching, but got empty string")
+	}
+	
+	// EmailAddress should not be filled (in except list)
+	if test.EmailAddress != "" {
+		t.Errorf("Expected EmailAddress to be empty (in FillExcept list), but got: %s", test.EmailAddress)
+	}
+	
+	// NoMatchField should not be filled (no matching faker)
+	if test.NoMatchField != "" {
+		t.Errorf("Expected NoMatchField to be empty (no matching faker), but got: %s", test.NoMatchField)
+	}
+}

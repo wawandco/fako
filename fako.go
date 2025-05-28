@@ -38,18 +38,27 @@ func fillWithDetails(strukt any, only []string, except []string) {
 		field := elem.Field(i)
 		fieldt := elemT.Field(i)
 
-		fakeType := fieldt.Tag.Get("fako")
-		if fakeType == "" {
-			continue
+		fakerID := fieldt.Tag.Get("fako")
+
+		// If no fako tag is specified, try to match field name with faker functions
+		if fakerID == "" {
+			// Convert field name to camelized format and check if a faker function exists
+			fieldNameCamelized := camelize(fieldt.Name)
+			_, exists := allGenerators()[fieldNameCamelized]
+			if !exists {
+				continue
+			}
+
+			fakerID = fieldNameCamelized
+		} else {
+			fakerID = camelize(fakerID)
 		}
 
-		fakeType = camelize(fakeType)
-		function := findFakeFunctionFor(fakeType)
-
+		function := findFakeFunctionFor(fakerID)
 		inOnly := len(only) == 0 || (len(only) > 0 && contains(only, fieldt.Name))
 		notInExcept := len(except) == 0 || (len(except) > 0 && !contains(except, fieldt.Name))
 
-		if field.CanSet() && fakeType != "" && inOnly && notInExcept {
+		if field.CanSet() && fakerID != "" && inOnly && notInExcept {
 			field.SetString(function())
 		}
 	}
